@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form GPA</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="title">แบบ Form GPA</div>
+        <div class="content">
+          <form>
+            <div class="user-details">
+              <div class="input-box">
+                <span class="details">ID</span>
+                <input
+                  type="text"
+                  name="id"
+                  class="form-control"
+                  id="id"
+                  placeholder="รหัสนักศึกษา 10 หลัก เช่น 6XXXXXXXXXX"
+                  title="กรุณากรอกรหัสนักศึกษา(ตัวเลข) 10 หลัก"
+                  required
+                  v-model="student.id"
+                />
+              </div>
+              <div class="input-box">
+                <span class="details">First name</span>
+                <input
+                  v-model="student.name"
+                  type="text"
+                  name="name"
+                  id="name"
+                  placeholder="ชื่อจริง"
+                  required
+                />
+              </div>
+              <div class="input-box">
+                <span class="details">Last name</span>
+                <input
+                  v-model="student.lname"
+                  type="text"
+                  name="lname"
+                  id="lname"
+                  placeholder="นามสกุล"
+                  required
+                />
+              </div>
+              <div class="input-box">
+                <span class="details">Email</span>
+                <input
+                  v-model="student.email"
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="exampleEmail@gmail.com"
+                  required
+                />
+              </div>
+              <div class="input-box">
+                <span class="details">GPA</span>
+                <input
+                  v-model="student.gpa"
+                  type="float"
+                  name="gpa"
+                  id="gpa"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+            </div>
+            <div class="button">
+              <button type="submit" @click="add(student)" class="input">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="table" class="container mt-3">
+        <table class="table">
+          <thead class="htable">
+            <tr>
+              <th>ID</th>
+              <th>Firstname</th>
+              <th>Lastname</th>
+              <th>Email</th>
+              <th>GPA</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="(stu,index) in studentList ">
+              <td v-if="stu.gpa < 2.00" style="color: red; font-weight: bold">
+                {{stu.id}}
+              </td>
+              <td v-if="stu.gpa < 2.00" style="color: red; font-weight: bold">
+                {{stu.name}}
+              </td>
+              <td v-if="stu.gpa < 2.00" style="color: red; font-weight: bold">
+                {{stu.lname}}
+              </td>
+              <td v-if="stu.gpa < 2.00" style="color: red; font-weight: bold">
+                {{stu.email}}
+              </td>
+              <td v-if="stu.gpa < 2.00" style="color: red; font-weight: bold">
+                {{stu.gpa}}
+              </td>
+
+              <td v-if="stu.gpa >= 2.00 && stu.gpa <= 4.00">{{stu.id}}</td>
+              <td v-if="stu.gpa >= 2.00 && stu.gpa <= 4.00">{{stu.name}}</td>
+              <td v-if="stu.gpa >= 2.00 && stu.gpa <= 4.00">{{stu.lname}}</td>
+              <td v-if="stu.gpa >= 2.00 && stu.gpa <= 4.00">{{stu.email}}</td>
+              <td v-if="stu.gpa >= 2.00 && stu.gpa <= 4.00">{{stu.gpa}}</td>
+              <td>
+                <button type="button" class="del" @click="del(index)">
+                  DELETE
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  var CRUD = new Vue({
+    el: "#app ",
+    data: {
+      student: {},
+      studentList: [],
+      
+    },
+    methods: {
+      add: function (stu) {
+        this.studentList.push(stu);
+        this.student = {};
+        swal('สำเร็จ!','เพิ่มข้อมูลสำเร็จแล้ว','success')
+      },
+
+      del(index) {
+        swal({
+          title: 'Deleted!, ลบข้อมูล!',
+          text: 'Are you sure, คุณแน่ใจหรือไม่ ',
+          icon: 'error',
+          buttons: true,
+          dangerMode: true
+        }).then((willDelete) => {
+          if(willDelete){
+            this.studentList.splice(index,1)
+          }else {
+          }
+        })
+        
+      },
+
+    },
+  });
+  $(document).ready(function () {
+    $("#gpa").mask("0.00");
+    $("#id").mask("0000000000");
+  });
+</script>
